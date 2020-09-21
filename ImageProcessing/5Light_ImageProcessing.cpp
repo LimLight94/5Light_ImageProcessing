@@ -2,8 +2,7 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/xfeatures2d.hpp>
 #include <opencv2/stitching.hpp>
-#include <time.h>
-#include <iostream>  
+#include <iostream>
 
 using namespace cv;
 using namespace cv::xfeatures2d;
