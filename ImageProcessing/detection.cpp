@@ -1,4 +1,4 @@
-#include "detection.h"
+#include "Detection.h"
 
 void objectDetection(VideoCapture& cap)
 {

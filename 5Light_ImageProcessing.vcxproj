@@ -19,7 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ImageProcessing\*.cpp" />
+    <ClCompile Include="ImageProcessing\Main.cpp" />
+    <ClCompile Include="ImageProcessing\Stitching.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImageProcessing\*.h" />
