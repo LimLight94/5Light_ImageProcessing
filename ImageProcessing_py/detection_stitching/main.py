@@ -8,8 +8,8 @@ from ImageProcessing_py.detection.detection_util import *
 
 net = initYolo(cls_file="ImageProcessing_py/detection/coco.names", model_conf="ImageProcessing_py/detection/yolov4-tiny.cfg", model_weight="ImageProcessing_py/detection/yolov4-tiny.weights")
 # initial stitching
-leftStream = cv2.VideoCapture("ImageProcessing_py/stitching/left_11_12.mp4")
-rightStream = cv2.VideoCapture("ImageProcessing_py/stitching/right_11_12.mp4")
+leftStream = cv2.VideoCapture("res/left.mp4")
+rightStream = cv2.VideoCapture("res/right.mp4")
 
 time.sleep(2.0)
 
@@ -17,14 +17,14 @@ time.sleep(2.0)
 stitcher = Stitcher()
 motion = BasicMotionDetector(minArea=500)
 
-# write video
+# write res
 stResult_type = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
 fps = leftStream.get(cv2.CAP_PROP_FPS)
 print("fps : ",fps)
 # stResult = cv2.VideoWriter("stResult.mp4", stResult_type, fps, (int(800), int(225)), True)
 stResult = None
 
-# loop over frames from the video streams
+# loop over frames from the res streams
 while True:
     ret_l, left = leftStream.read()
     ret_r, right = rightStream.read()
@@ -62,7 +62,7 @@ while True:
         print("[INFO] homography could not be computed")
         break
     if stResult is None :
-        stResult = cv2.VideoWriter("stResult.mp4", stResult_type, fps, ( int(result.shape[1]), int(result.shape[0]) ), True)
+        stResult = cv2.VideoWriter("res/result.mp4", stResult_type, fps, ( int(result.shape[1]), int(result.shape[0]) ), True)
     # # show the output images
     cv2.imshow("Result", result)
     cv2.imshow("Left Frame", left)

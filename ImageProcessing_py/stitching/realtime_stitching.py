@@ -11,7 +11,7 @@ import imutils
 import time
 import cv2
 
-# initialize the video streams and allow them to warmup
+# initialize the res streams and allow them to warmup
 print("[INFO] starting cameras...")
 # leftStream = VideoStream("left.mp4").start()
 # rightStream = VideoStream("right.mp4").start()
@@ -30,9 +30,9 @@ fps = leftStream.get(cv2.CAP_PROP_FPS)
 print("fps : ",fps)
 stResult = cv2.VideoWriter("stResult.mp4", stResult_type, fps, (int(800), int(225)), True)
 
-# loop over frames from the video streams
+# loop over frames from the res streams
 while True:
-	# grab the frames from their respective video streams
+	# grab the frames from their respective res streams
 	ret_l, left = leftStream.read()
 	ret_r, right = rightStream.read()
 
