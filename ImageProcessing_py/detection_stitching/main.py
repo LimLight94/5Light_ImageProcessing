@@ -1,9 +1,9 @@
 from __future__ import print_function
 from ImageProcessing_py.stitching.basicmotiondetector import BasicMotionDetector
 from ImageProcessing_py.stitching.panorama import Stitcher
+from ImageProcessing_py.detection.detection_util import *
 import imutils
 import time
-from ImageProcessing_py.detection.detection_util import *
 
 
 net = initYolo(cls_file="ImageProcessing_py/detection/coco.names", model_conf="ImageProcessing_py/detection/yolov4-tiny.cfg", model_weight="ImageProcessing_py/detection/yolov4-tiny.weights")
