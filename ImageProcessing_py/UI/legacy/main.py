@@ -3,7 +3,6 @@ import sys
 import datetime
 import cv2
 import numpy as np
-from PyQt5.QtCore import QTimer, QEvent, Qt
 from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtWidgets import QFileDialog, QApplication, QMainWindow, QInputDialog
 
@@ -136,8 +135,8 @@ class Qtcv(QMainWindow, qtcvui.Ui_MainWindow):
             return
 
         try:
-            if not os.path.exists('../../pythonProject1/data'):
-                os.makedirs('../../pythonProject1/data')
+            if not os.path.exists('../../../../pythonProject1/data'):
+                os.makedirs('../../../../pythonProject1/data')
 
             # log raw data
             if self.isVideoFileLoaded:
