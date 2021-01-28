@@ -23,4 +23,5 @@ def combine_images(img0, img1, h_matrix):
     logger.debug('warping previous image...')
     output_img = cv2.warpPerspective(img1, H_translation.dot(h_matrix), (x_max - x_min, y_max - y_min))
     output_img[-y_min:img0.shape[0] - y_min, -x_min:img0.shape[1] - x_min] = img0
-    return output_img
+    result = [output_img, -y_min, img0.shape[0] - y_min, -x_min, img0.shape[1] - x_min]
+    return result
