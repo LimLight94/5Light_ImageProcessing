@@ -28,6 +28,18 @@ def display(title, img, max_size=500000):
     img = cv2.resize(img, shape)
     cv2.imshow(title, img)
 
+def display_red(title, img, location, max_size=500000):
+    assert isinstance(img, numpy.ndarray), 'img must be a numpy array'
+    assert isinstance(title, str), 'title must be a string'
+    img1 = img.copy()
+    scale = numpy.sqrt(min(1.0, float(max_size) / (img1.shape[0] * img1.shape[1])))
+    shape = (int(scale * img1.shape[1]), int(scale * img1.shape[0]))
+    img1[location[0]:location[1], location[2]] = [0, 0, 255]
+    img1[location[0]:location[1], location[3] - 1] = [0, 0, 255]
+    img1[location[0], location[2]:location[3]] = [0, 0, 255]
+    img1[location[1] - 1, location[2]:location[3]] = [0, 0, 255]
+    img1 = cv2.resize(img1, shape)
+    cv2.imshow(title, img1)
 
 def save_image(path, result):
     name, ext = os.path.splitext(path)

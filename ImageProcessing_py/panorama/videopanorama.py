@@ -72,10 +72,12 @@ if __name__ == '__main__':  # 플러그
                 continue
 
             H, mask = cv2.findHomography(matches_src, matches_dst, cv2.RANSAC, 5.0)
-            result = utils.combine_images(frame, result, H)
+            result_location = utils.combine_images(frame, result, H)
+            result = result_location[0]
+            location = [result_location[1], result_location[2], result_location[3], result_location[4]]
 
             if args.display and not args.quiet:
-                utils.helpers.display('result', result)
+                utils.helpers.display_red('result', result, location)
                 if cv2.waitKey(25) & 0xFF == ord('q'):
                     break
 
