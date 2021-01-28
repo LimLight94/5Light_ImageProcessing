@@ -47,7 +47,7 @@ if __name__ == '__main__':  # 플러그
     while True:
 
         ret, frame = cap.read()
-        if i%10 != 0:
+        if i%5 != 0:
             i= i+1
             continue
         i = i + 1
@@ -84,37 +84,6 @@ if __name__ == '__main__':  # 플러그
     logger.info('{0} is completed'.format(args.video_path))
     cap.release()
     cv2.destroyAllWindows()
+    result = utils.helpers.removeMargin(result)
     if args.save:
         utils.helpers.save_image(args.video_path, result)
-
-
-# 이미지가 불러져왔는지 확인
-image = cv2.imread("C:/All/repos/5Light_ImageProcessing/res/panorama/test.png", cv2.IMREAD_ANYCOLOR)
-if image is None:
-    print('Imager load failed!') # 이미지가 없으면 출력
-    sys.exit()
-cv2.imshow("panorama image", image)
-
-# 마스크 구하기(픽셀값 0,255로 나누기)
-gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-thresh = cv2.bitwise_not(cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY)[1])
-thresh = cv2.medianBlur(thresh, 5)
-
-plt.figure(figsize=(20, 20))
-plt.imshow(thresh, cmap='gray')
-
-
-# 테두리 지우기
-stitched_copy = image.copy()
-thresh_copy = thresh.copy()
-
-while np.sum(thresh_copy) > 0:
-    thresh_copy = thresh_copy[1:-1, 1:-1]
-    stitched_copy = stitched_copy[1:-1, 1:-1]
-
-plt.figure(figsize=(20, 20))
-plt.imshow(cv2.cvtColor(stitched_copy, cv2.COLOR_BGR2RGB))
-cv2.imshow("clean image", stitched_copy)
-cv2.imwrite("C:/All/repos/5Light_ImageProcessing/res/panorama/result.png",stitched_copy)
-cv2.waitKey(0)
-cv2.destroyAllWindows()

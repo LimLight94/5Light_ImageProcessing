@@ -2,6 +2,7 @@ import os
 import cv2
 import numpy
 import logging
+import matplotlib.pyplot as plt
 
 logger = logging.getLogger("main")
 
@@ -35,3 +36,22 @@ def save_image(path, result):
     logger.debug('writing image to {0}'.format(img_path))
     cv2.imwrite(img_path, result)
     logger.debug('writing complete')
+
+def removeMargin(result):
+    # 마스크 구하기(픽셀값 0,255로 나누기)
+    gray = cv2.cvtColor(result, cv2.COLOR_BGR2GRAY)
+    thresh = cv2.bitwise_not(cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY)[1])
+    thresh = cv2.medianBlur(thresh, 5)
+
+    plt.figure(figsize=(20, 20))
+    plt.imshow(thresh, cmap='gray')
+
+    # 테두리 지우기
+    stitched_copy = result.copy()
+    thresh_copy = thresh.copy()
+
+    while numpy.sum(thresh_copy) > 0:
+        thresh_copy = thresh_copy[1:-1, 1:-1]
+        stitched_copy = stitched_copy[1:-1, 1:-1]
+
+    return stitched_copy
