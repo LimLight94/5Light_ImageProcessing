@@ -1,9 +1,13 @@
 from __future__ import print_function
-
+from PyQt5 import QtCore,QtGui,QtWidgets
 import sys
-from PyQt5.QtCore import QUrl
+
+from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QThread
 from PyQt5.QtWidgets import QLabel, QFileDialog, QApplication, QWidget, QHBoxLayout, QVBoxLayout, QPushButton
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
+from PyQt5.QtGui import QPixmap, QImage
+from time import sleep
+
 from ImageProcessing_py.stitching.basicmotiondetector import BasicMotionDetector
 from ImageProcessing_py.stitching.panorama import Stitcher
 import imutils
@@ -16,15 +20,20 @@ class MyApp(QWidget):
     def __init__(self):
         super().__init__()
         self.initUI()
-        self.player = QMediaPlayer()
+
         self.video1 = None
         self.video2 = None
         fileDialog = QFileDialog()
+
 
     def initUI(self):
 
         n1 = QPushButton('1', self)
         n2 = QPushButton('2', self)
+        self.video1_viewer_label = QLabel()
+        self.video1_viewer_label.setGeometry(QtCore.QRect(10, 10, 400, 300))
+        self.video2_viewer_label = QLabel()
+        self.video2_viewer_label.setGeometry(QtCore.QRect(10, 10, 400, 300))
         self.label1 = QLabel()
         self.label2 = QLabel()
         n1.clicked.connect(self.pushButtonClicked_1)
@@ -68,12 +77,14 @@ class MyApp(QWidget):
         self.label1.setText(fname[0])
         self.video1 = fname[0]
 
+
     def pushButtonClicked_2(self):
 
         fname = QFileDialog.getOpenFileName(self)
 
         self.label2.setText(fname[0])
         self.video2 = fname[0]
+
 
     def pushButtonClicked_stitch(self):
         leftStream = cv2.VideoCapture(self.video1)
@@ -122,20 +133,24 @@ class MyApp(QWidget):
                 print("[INFO] homography could not be computed")
                 break
             if stResult is None:
-                stResult = cv2.VideoWriter("res/result2.mp4", stResult_type, fps,
+                stResult = cv2.VideoWriter("res/result4.mp4", stResult_type, fps,
                                            (int(result.shape[1]), int(result.shape[0])), True)
-            cv2.imshow("Result", result)
+
 
             # stResult.write(result)
             # self.player.setMedia(QMediaContent(QUrl.fromLocalFile("res/result2.mp4")))
             #
             # self.play()
-        stResult.release()
+
+
+
         cv2.destroyAllWindows()
         print("success")
 
 
 if __name__ == '__main__':
-    app = QApplication(sys.argv)
+
+    app = QtWidgets.QApplication(sys.argv)
+
     ex = MyApp()
     sys.exit(app.exec())
