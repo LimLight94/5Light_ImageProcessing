@@ -21,7 +21,7 @@ def combine_images(img0, img1, h_matrix):
     [x_max, y_max] = numpy.int32(points.max(axis=0).ravel() + 0.5)
     H_translation = numpy.array([[1, 0, -x_min], [0, 1, -y_min], [0, 0, 1]])
     logger.debug('warping previous image...')
-    output_img = cv2.warpPerspective(img1, H_translation.dot(h_matrix), (x_max - x_min, y_max - y_min))
+    output_img = cv2.warpPerspective(img1, H_translation.dot(h_matrix), (x_max - x_min, y_max - y_min), flags=cv2.INTER_NEAREST)
     output_img[-y_min:img0.shape[0] - y_min, -x_min:img0.shape[1] - x_min] = img0
-    result = [output_img, -y_min, img0.shape[0] - y_min, -x_min, img0.shape[1] - x_min]
-    return result
+    location = [-y_min, img0.shape[0] - y_min, -x_min, img0.shape[1] - x_min]
+    return output_img,location

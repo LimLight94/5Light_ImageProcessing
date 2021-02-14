@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import argparse
-import logging #디버그할 때 로그찍어주는 모듈
-import cv2  #opencv 모듈
+import logging  # 디버그할 때 로그찍어주는 모듈
+import cv2  # opencv 모듈
 import numpy as np
 import sys
 
@@ -20,7 +20,7 @@ if __name__ == '__main__':  # 플러그
     parser.add_argument('-m', '--min', dest='min_correspondence', default=10, type=int, help='min correspondences')
     args = parser.parse_args()
 
-    if args.debug: # 예외처리
+    if args.debug:  # 예외처리
         logging.basicConfig(level=logging.DEBUG)
     else:
         logging.basicConfig(level=logging.INFO)
@@ -28,7 +28,7 @@ if __name__ == '__main__':  # 플러그
 
     logging.info("beginning sequential matching")
 
-    if utils.helpers.is_cv2():     #opencv 버전 별
+    if utils.helpers.is_cv2():  # opencv 버전 별
         sift = cv2.SIFT()
     elif utils.helpers.is_cv3():
         sift = cv2.xfeatures2d.SIFT_create()
@@ -43,19 +43,18 @@ if __name__ == '__main__':  # 플러그
     flann = cv2.FlannBasedMatcher({'algorithm': 0, 'trees': 5}, {'checks': 50})
 
     cap = cv2.VideoCapture(args.video_path)
-    i=0
+    i = 0
     while True:
 
         ret, frame = cap.read()
-        if i%5 != 0:
-            i= i+1
+        if i % 5 != 0:
+            i = i + 1
             continue
         i = i + 1
 
-
-        if not ret: #제대로 못읽었을 경우
+        if not ret:  # 제대로 못읽었을 경우
             break
-        else:       #제대로 읽었을 경우 그레이로 바꾸기
+        else:  # 제대로 읽었을 경우 그레이로 바꾸기
             frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
         if result is None:
@@ -67,14 +66,12 @@ if __name__ == '__main__':  # 플러그
             matches_src, matches_dst, n_matches = utils.compute_matches(
                 features0, features1, flann, knn=args.knn)
 
-            if n_matches < args.min_correspondence:
+            if len(n_matches) < args.min_correspondence:
                 logger.error("error! too few correspondences")
                 continue
 
             H, mask = cv2.findHomography(matches_src, matches_dst, cv2.RANSAC, 5.0)
-            result_location = utils.combine_images(frame, result, H)
-            result = result_location[0]
-            location = [result_location[1], result_location[2], result_location[3], result_location[4]]
+            result, location = utils.combine_images(frame, result, H)
 
             if args.display and not args.quiet:
                 utils.helpers.display_red('result', result, location)
