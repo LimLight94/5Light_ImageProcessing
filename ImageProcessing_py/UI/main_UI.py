@@ -1,18 +1,12 @@
 from __future__ import print_function
-from PyQt5 import QtCore,QtGui,QtWidgets
-import sys
-
-from PyQt5.QtCore import QUrl
+from PyQt5 import QtCore,QtWidgets
 from PyQt5.QtWidgets import QLabel, QFileDialog, QApplication, QWidget, QHBoxLayout, QVBoxLayout, QPushButton
-from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
-from PyQt5.QtGui import QPixmap, QImage
-from time import sleep
-import threading
-from ImageProcessing_py.stitching.basicmotiondetector import BasicMotionDetector
 from ImageProcessing_py.stitching.panorama import Stitcher
+from ImageProcessing_py.detection.detection_util import *
+import sys
+import threading
 import imutils
 import time
-from ImageProcessing_py.detection.detection_util import *
 
 
 class MyApp(QWidget):
@@ -22,7 +16,6 @@ class MyApp(QWidget):
         self.initUI()
         self.video1 = None
         self.video2 = None
-        fileDialog = QFileDialog()
 
 
     def initUI(self):
@@ -101,7 +94,6 @@ class MyApp(QWidget):
 
         # initialize the image stitcher, motion detector, and total
         stitcher = Stitcher()
-        motion = BasicMotionDetector(minArea=500)
 
         # write res
         stResult_type = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
@@ -121,10 +113,7 @@ class MyApp(QWidget):
             left = imutils.resize(left, width=400)
             right = imutils.resize(right, width=400)
 
-            # stitch the frames together to form the panorama
-            # IMPORTANT: you might have to change this line of code
-            # depending on how your cameras are oriented; frames
-            # should be supplied in left-to-right order
+            # stitching
             result = stitcher.stitch([left, right])
 
             # no homograpy could be computed
@@ -135,14 +124,19 @@ class MyApp(QWidget):
                 stResult = cv2.VideoWriter("res/result.mp4", stResult_type, fps,
                                            (int(result.shape[1]), int(result.shape[0])), True)
 
+            cv2.imshow("Left", left)
+            cv2.imshow("Right", right)
+            cv2.imshow("Result", result)
+            cv2.waitKey(100)
+            stResult.write(result)
 
-            # stResult.write(result)
-            # self.player.setMedia(QMediaContent(QUrl.fromLocalFile("res/result2.mp4")))
-            #
-            # self.play()
+        print("success")
         stResult.release()
         cv2.destroyAllWindows()
-        print("success")
+
+
+
+
 
 
 if __name__ == '__main__':
