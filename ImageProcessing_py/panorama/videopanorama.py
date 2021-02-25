@@ -66,7 +66,7 @@ if __name__ == '__main__':  # 플러그
             matches_src, matches_dst, n_matches = utils.compute_matches(
                 features0, features1, flann, knn=args.knn)
 
-            if len(n_matches) < args.min_correspondence:
+            if n_matches < args.min_correspondence:
                 logger.error("error! too few correspondences")
                 continue
 
