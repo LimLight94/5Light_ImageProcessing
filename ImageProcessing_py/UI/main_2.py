@@ -36,9 +36,12 @@ class MyApp(QWidget):
 
         self.button_2 =QPushButton("Video_2",self)
         self.button_2.resize(200,100)
+        self.button_3 =QPushButton("Select Video",self)
+        self.button_3.resize(200,150)
         self.button_1.setVisible(0)
         self.button_2.setVisible(0)
-        self.button_3 =QPushButton("실행",self)
+        self.button_3.setVisible(0)
+        self.button_4 =QPushButton("실행",self)
 
         groupBox= QGroupBox("Mode",self)
         groupBox.move(40,300)
@@ -60,8 +63,8 @@ class MyApp(QWidget):
         self.check2 = QCheckBox("Blur", self)
         self.check2.move(310, 400)
 
-        self.button_3.move(600,300)
-        self.button_3.resize(200,200)
+        self.button_4.move(600,300)
+        self.button_4.resize(200,200)
 
 
         self.setGeometry(300, 300, 900, 1000)
@@ -71,17 +74,18 @@ class MyApp(QWidget):
     def radioButtonClicked(self):
 
         if self.radio1.isChecked():
+
             self.button_1.setVisible(1)
             self.button_2.setVisible(1)
+            self.button_3.setVisible(0)
             self.button_1.move(200,50)
             self.button_2.move(450,50)
 
         elif self.radio2.isChecked():
+            self.button_1.setVisible(0)
             self.button_2.setVisible(0)
-            self.button_1.setVisible(1)
-            self.button_1.resize(200,150)
-            self.button_1.setText("Select Video")
-            self.button_1.move(300,50)
+            self.button_3.setVisible(1)
+            self.button_3.move(300,50)
 
 
 
