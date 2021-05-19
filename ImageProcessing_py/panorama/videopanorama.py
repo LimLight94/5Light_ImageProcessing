@@ -1,9 +1,6 @@
-import matplotlib.pyplot as plt
 import argparse
 import logging  # 디버그할 때 로그찍어주는 모듈
 import cv2  # opencv 모듈
-import numpy as np
-import sys
 
 from ImageProcessing_py import utils
 
