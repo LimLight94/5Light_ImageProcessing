@@ -1,7 +1,6 @@
 import os
 import matplotlib.pyplot as plt
 import math
-import ray
 
 from ImageProcessing_py.utils.matching import *
 from ImageProcessing_py.utils.combine import *
@@ -774,7 +773,6 @@ def eulerAnglesToRotationMatrix(theta):
 
     return R
 
-@ray.remote
 def rtnWarpImage(frame, beforeResult, args, sift, flann, K, R):
 
     warper = cv2.PyRotationWarper('spherical', float(950))

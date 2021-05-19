@@ -21,7 +21,7 @@ def combine_images(stitched_img, newFrame, h_matrix, resultT):
     max_h = h0
 
     # ##case1!!!
-    img2_warped = cv2.warpPerspective(newFrame, h_matrix, (max_w, max_h), flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_TRANSPARENT)
+    img2_warped = cv2.warpPerspective(newFrame, h_matrix, (max_w, max_h), flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_CONSTANT)
     tm = cv2.TickMeter()
     tm.reset()
     tm.start()

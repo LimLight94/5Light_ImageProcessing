@@ -9,6 +9,8 @@ import math
 from ImageProcessing_py import utils
 import time
 
+from ImageProcessing_py.detection.Detection import Detection
+
 if __name__ == '__main__':  # 플러그
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('video_path', type=str, help="paths to one or more images or image directories")
@@ -47,7 +49,7 @@ if __name__ == '__main__':  # 플러그
     flann = cv2.FlannBasedMatcher({'algorithm': 1, 'trees': 5}, {'checks': 50})
 
     cap = cv2.VideoCapture(args.video_path)
-    beforeResult = cv2.imread("res/panorama/0511sam/result4.jpg")
+    beforeResult = cv2.imread("res/0511sam/result6.jpg")
     beforeResult_gray = cv2.cvtColor(beforeResult, cv2.COLOR_BGR2GRAY)
     length = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -84,6 +86,10 @@ if __name__ == '__main__':  # 플러그
             warper = cv2.PyRotationWarper('spherical', float(f))
             corner, frame = warper.warp(frame, K, R, cv2.INTER_CUBIC, cv2.BORDER_CONSTANT)
             frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+            #detection
+            object_detector = Detection()
+            frame = object_detector.detectObject(frame)
 
             features0 = sift.detectAndCompute(frame_gray, None)
             if features1 is None:

@@ -61,16 +61,19 @@ def postprocess(frame, outs):
         height = box[3]
         drawPred(frame, classIds[i], confidences[i], left, top, left + width, top + height)
 
+    return frame
+
+
 
 def drawPred(frame, classId, conf, left, top, right, bottom):
     cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255))
 
-    label = '%.2f' % conf
-
-    if classes:
-        assert (classId < len(classes))
-        label = '%s:%s' % (classes[classId], label)
-
-    labelSize, baseLine = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)
-    top = max(top, labelSize[1])
-    cv2.putText(frame, label, (left, top), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255))
+    # label = '%.2f' % conf
+    #
+    # if classes:
+    #     assert (classId < len(classes))
+    #     label = '%s:%s' % (classes[classId], label)
+    #
+    # labelSize, baseLine = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)
+    # top = max(top, labelSize[1])
+    # cv2.putText(frame, label, (left, top), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255))
