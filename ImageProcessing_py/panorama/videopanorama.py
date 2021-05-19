@@ -1,13 +1,10 @@
-import matplotlib.pyplot as plt
 import argparse
 import logging  # 디버그할 때 로그찍어주는 모듈
 import cv2  # opencv 모듈
 import numpy as np
 import imutils
-import sys
 import math
 from ImageProcessing_py import utils
-import time
 
 if __name__ == '__main__':  # 플러그
     parser = argparse.ArgumentParser(description=__doc__)
