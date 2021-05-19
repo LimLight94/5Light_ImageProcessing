@@ -1,16 +1,10 @@
 import os
-import cv2
-import numpy
-import logging
 import matplotlib.pyplot as plt
 import math
-from collections import Counter
-import imutils
 import ray
 
 from ImageProcessing_py.utils.matching import *
 from ImageProcessing_py.utils.combine import *
-import threading
 
 logger = logging.getLogger("main")
 

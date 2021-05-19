@@ -1,6 +1,6 @@
 from __future__ import print_function
 from ImageProcessing_py.stitching.basicmotiondetector import BasicMotionDetector
-from ImageProcessing_py.stitching.panorama import Stitcher
+from ImageProcessing_py.stitching.stitcher import Stitcher
 from ImageProcessing_py.detection.detection_util import *
 import imutils
 import time
