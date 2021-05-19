@@ -1,6 +1,7 @@
 import os
 import matplotlib.pyplot as plt
 import math
+import imutils
 
 from ImageProcessing_py.utils.matching import *
 from ImageProcessing_py.utils.combine import *
@@ -63,19 +64,17 @@ def displayCor(title, img, location, max_size=500000):
     cv2.imshow(title, distored)
 
 def display_red(title, img, corner, max_size=500000):
-    assert isinstance(img, numpy.ndarray), 'img must be a numpy array'
-    assert isinstance(title, str), 'title must be a string'
+    #assert isinstance(img, numpy.ndarray), 'img must be a numpy array'
+    #assert isinstance(title, str), 'title must be a string'
     img1 = img.copy()
+    cv2.drawContours(img1, [corner], 0, (0, 0, 255), 1)
     scale = numpy.sqrt(min(1.0, float(max_size) / (img1.shape[0] * img1.shape[1])))
     shape = (int(scale * img1.shape[1]), int(scale * img1.shape[0]))
-    '''for i in range(0, len(corner)):
-        #print(str(i))
-        x = corner[i][0]
-        y = corner[i][1]
-        img1[x, y] = [0, 0, 255]'''
 
-    img1 = cv2.resize(img1, shape)
-    cv2.imshow(title, img1)
+    #img1 = cv2.resize(img1, shape)
+    #cv2.imshow(title, img1)
+
+    return img1
 
 def save_image(path, result):
     name, ext = os.path.splitext(path)
@@ -103,58 +102,20 @@ def removeMargin(result):
 
     return stitched_copy
 
-def removeMarginMin(result, color="BGR"):
-    if color is "BGR":
-        gray = cv2.cvtColor(result, cv2.COLOR_BGR2GRAY)
-    elif color is "GRAY":
-        gray = result
-    thresh = cv2.bitwise_not(cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY)[1])
-    thresh = cv2.medianBlur(thresh, 5)
-
-    plt.figure(figsize=(20, 20))
-    plt.imshow(thresh, cmap='gray')
-
-    # 테두리 지우기
-
-    stitched_copy = result.copy()
-    thresh_copy = thresh.copy()
-
-    while numpy.sum(thresh_copy[0:thresh_copy.shape[0], 0]) == thresh_copy.shape[0] * 255:
-        thresh_copy = thresh_copy[0:thresh_copy.shape[0], 1:thresh_copy.shape[1]]
-        stitched_copy = stitched_copy[0:stitched_copy.shape[0], 1:stitched_copy.shape[1]]
-
-    while numpy.sum(thresh_copy[0:thresh_copy.shape[0], thresh_copy.shape[1] - 1]) == thresh_copy.shape[0] * 255:
-        thresh_copy = thresh_copy[0:thresh_copy.shape[0], 0:thresh_copy.shape[1] - 2]
-        stitched_copy = stitched_copy[0:stitched_copy.shape[0], 0:stitched_copy.shape[1] - 2]
-
-    while numpy.sum(thresh_copy[0, 0:thresh_copy.shape[1]]) == thresh_copy.shape[1] * 255:
-        thresh_copy = thresh_copy[1:thresh_copy.shape[0], 0:thresh_copy.shape[1]]
-        stitched_copy = stitched_copy[1:stitched_copy.shape[0], 0:stitched_copy.shape[1]]
-
-    while numpy.sum(thresh_copy[thresh_copy.shape[0] - 1, 0:thresh_copy.shape[1]]) == thresh_copy.shape[1] * 255:
-        thresh_copy = thresh_copy[0:thresh_copy.shape[0] - 2, 0:thresh_copy.shape[1]]
-        stitched_copy = stitched_copy[0:stitched_copy.shape[0] - 2, 0:stitched_copy.shape[1]]
-
-    return stitched_copy
-
 def ifExist(result):
     result1 = result.copy()
     gray = cv2.cvtColor(result1, cv2.COLOR_BGR2GRAY)
     thresh = cv2.bitwise_not(cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY)[1])
     thresh = cv2.medianBlur(thresh, 5)
-    #cv2.imshow("thresh", thresh)
-    #cv2.waitKey(1000)
     thresh_copy = thresh.copy()
     return thresh_copy
 
-def removeMarginL(frame, pixel):
+def removeMarginLeast(frame, pixel):
     result1 = frame.copy()
     gray = cv2.cvtColor(result1, cv2.COLOR_BGR2GRAY)
     thresh = cv2.bitwise_not(cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY)[1])
     thresh = cv2.medianBlur(thresh, 5)
-    count = 0
-    minP = 0
-    maxP = 0
+    count, minP, maxP = 0
 
     for i in range(0, thresh.shape[0]):
         for j in range(0, thresh.shape[1]):
@@ -207,12 +168,9 @@ def rvMar_retnP(frame, rm_pixel, bl_pixel, bunza, bunmo):
     thresh = cv2.medianBlur(thresh, 5)
     #find_contours
     count = 0
-    minP = 0
-    maxP = 0
-    minX = thresh.shape[0]
-    minY = thresh.shape[1]
-    maxX = 0
-    maxY = 0
+    minP, maxP, maxX, maxY = 0
+    minX, minY = thresh.shape[0:2]
+
     blending_list = {}
     a = bunza  # 분자 a = 4, b = 5 4/5~5/5
     b = bunmo # 분모
@@ -235,8 +193,6 @@ def rvMar_retnP(frame, rm_pixel, bl_pixel, bunza, bunmo):
                     blending_list[location] = proportion
                 else:
                     break
-            #display("th", thresh)
-            #cv2.waitKey(1)
         count = 0
 
         for j in range(thresh.shape[1] - 1, 0, -1):
@@ -255,8 +211,6 @@ def rvMar_retnP(frame, rm_pixel, bl_pixel, bunza, bunmo):
                     proportion = ((a+1)*bl_pixel - 1 - k + (maxP + 1 - rm_pixel - bl_pixel)) / (bl_pixel * b)
                     location = str(i) + " " + str(k)
                     blending_list[location] = proportion
-            #display("th", thresh)
-            #cv2.waitKey(1)
         count = 0
 
     for i in range(0, thresh.shape[1]):
@@ -276,8 +230,6 @@ def rvMar_retnP(frame, rm_pixel, bl_pixel, bunza, bunmo):
                     proportion = (a*bl_pixel - 1 + k - (minP + rm_pixel)) / (bl_pixel * b)
                     location = str(k) + " " + str(i)
                     blending_list[location] = proportion
-            #display("th", thresh)
-            #cv2.waitKey(1)
         count = 0
 
         for j in range(thresh.shape[0] - 1, 0, -1):
@@ -296,8 +248,6 @@ def rvMar_retnP(frame, rm_pixel, bl_pixel, bunza, bunmo):
                     proportion = ((a+1)*bl_pixel - 1 - k + (maxP + 1 - rm_pixel - bl_pixel)) / (bl_pixel * b)
                     location = str(k) + " " + str(i)
                     blending_list[location] = proportion
-            #display("th", thresh)
-            #cv2.waitKey(1)
         count = 0
 
     points = [minX, minY, maxX, maxY]
@@ -356,9 +306,7 @@ def medianFilter(output_img, warped_img, i, j, ratio):
     listR = []
     a = ratio
     b = 1 - ratio
-    B = 0
-    G = 0
-    R = 0
+    B, G, R = 0, 0, 0
     Rst = False
 
     if warped_img[i, j, 0] > 0 or warped_img[i, j, 1] > 0 or warped_img[i, j, 2] > 0:
@@ -449,7 +397,7 @@ def checkDirection(frame, result, args):
     elif is_cv3():
         sift = cv2.xfeatures2d.SIFT_create()
     elif is_cv4():
-        sift = cv2.xfeatures2d.SIFT_create()
+        sift = cv2.SIFT_create()
     else:
         raise RuntimeError("error! unknown version of python!")
 
@@ -472,8 +420,6 @@ def checkDirection(frame, result, args):
     y = computeResult.shape[0] // 2
     x1 = (H[0][0] * x + H[0][1] * y + H[0][2]) / (H[2][0] * x + H[2][1] * y + 1)
     y1 = (H[1][0] * x + H[1][1] * y + H[1][2]) / (H[2][0] * x + H[2][1] * y + 1)
-    print(str(x) + " " + str(y) + " " + str(int(x1)) + " " + str(int(y1)))
-    print("difference : " + str(x - int(x1)) + " " + str(y - int(y1)))
     moveX = x - int(x1)
     moveY = y - int(y1)
     if abs(moveX) >= abs(moveY):
@@ -486,68 +432,14 @@ def checkDirection(frame, result, args):
             direction = "up"
         else:
             direction = "down"
-    print(direction)
+    # print(str(x) + " " + str(y) + " " + str(int(x1)) + " " + str(int(y1)))
+    # print("difference : " + str(x - int(x1)) + " " + str(y - int(y1)))
+    #print(direction)
 
     return direction
 
-def stitching(frame, result, direction, args):
-    if is_cv2():  # opencv 버전 별
-        sift = cv2.SIFT()
-    elif is_cv3():
-        sift = cv2.xfeatures2d.SIFT_create()
-    elif is_cv4():
-        sift = cv2.xfeatures2d.SIFT_create()
-    else:
-        raise RuntimeError("error! unknown version of python!")
-
-    flann = cv2.FlannBasedMatcher({'algorithm': 0, 'trees': 16}, {'checks': 50})
-
-    computeFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    computeResult = cv2.cvtColor(result, cv2.COLOR_BGR2GRAY)
-
-    features0 = sift.detectAndCompute(computeFrame, None)
-    features1 = sift.detectAndCompute(computeResult, None)
-
-    matches_src, matches_dst, n_matches = compute_matches(
-        features0, features1, flann, knn=args.knn)
-
-    H, mask = cv2.findHomography(matches_src, matches_dst, cv2.RANSAC, 5.0)
-
-    #direction = None
-    '''x = computeResult.shape[1] // 2
-    y = computeResult.shape[0] // 2
-    x1 = (H[0][0] * x + H[0][1] * y + H[0][2]) / (H[2][0] * x + H[2][1] * y + 1)
-    y1 = (H[1][0] * x + H[1][1] * y + H[1][2]) / (H[2][0] * x + H[2][1] * y + 1)
-    moveX = x - int(x1)
-    moveY = y - int(y1)
-    if abs(moveX) >= abs(moveY):
-        if moveX >= 0:
-            direction = "left"
-        else:
-            direction = "right"
-    else:
-        if moveY >= 0:
-            direction = "up"
-        else:
-            direction = "down"'''
-
-    result, compute_frame, direction_frame, corner = utils.combine.combine_images(result, result, frame, direction, H)
-
-    return result
-
-def labeling(prev_img, warped_img, output_img, mask):
-    prev_img = cv2.bitwise_and(prev_img, prev_img, mask=mask)
-    warped_img = cv2.bitwise_and(warped_img, warped_img, mask=mask)
-    output_img1 = None
-    subtract_img = np.square(prev_img - warped_img)
-    cv2.imshow("dfs", subtract_img)
-    cv2.waitKey(300000)
-
-    return output_img1
-
-def blend(prev_img, warped_img, output_img, mask, direction):
+def linearBlend(prev_img, warped_img, output_img, mask, direction):
     _, contours, hierarchy = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-
     # mulArea = cv2.findNonZero(thresh1)
 
     dicMax = {}
@@ -597,9 +489,6 @@ def blend(prev_img, warped_img, output_img, mask, direction):
     return output_img
 
 def laplacian_blend(prev_img, warped_img, output_img, thresh):
-    #prev_img1 = cv2.bitwise_and(prev_img, prev_img, mask=thresh)
-    #warped_img1 = cv2.bitwise_and(warped_img, warped_img, mask=thresh)
-
     G = prev_img.copy()
     gpA = [G]
     for i in range(6):
@@ -645,34 +534,50 @@ def laplacian_blend(prev_img, warped_img, output_img, thresh):
 
     return ls_
 
-def rvContours(warped_img):
+def blend(frame1, frame2, mask1, mask2, type='multiband', blend_strength=20):
+    # (x, y, w, h) = utils.helpers.returnRect(img2_warped)
+    # (x1, y1, w1, h1) = utils.helpers.returnRect(resultT)
+    (x, y, w, h) = (0, 0, frame1.shape[1], frame1.shape[0])
+    (x1, y1, w1, h1) = (0, 0, frame2.shape[1], frame2.shape[0])
+    corners = [(x, y), (x1, y1)]
+    sizes = [(w, h), (w1, h1)]
+    dst_sz = cv2.detail.resultRoi(corners=corners, sizes=sizes)
+    blend_width = numpy.sqrt(dst_sz[2] * dst_sz[3]) * blend_strength / 100
+
+    if type == 'feather':
+        blender = cv2.detail_FeatherBlender()
+        blender.setSharpness(1. / blend_width)
+    elif type == 'multiband':
+        blender = cv2.detail_MultiBandBlender(try_gpu=1)
+        blender.setNumBands((numpy.log(blend_width) / numpy.log(2.) - 1.).astype(numpy.int))
+
+    blender.prepare(dst_sz)
+    frame1_s = frame1.astype(numpy.int16)
+    frame2_s = frame2.astype(numpy.int16)
+
+    blender.feed(cv2.UMat(frame1_s), mask1, (0, 0))
+    blender.feed(cv2.UMat(frame2_s), mask2, (0, 0))
+
+    result = None
+    result_mask = None
+    result, result_mask = blender.blend(result, result_mask)
+    result = result.astype(numpy.uint8)
+
+    return result, result_mask
+
+def rvContours(warped_img, n):
     img_gray = cv2.cvtColor(warped_img, cv2.COLOR_BGR2GRAY)
     thresh = cv2.threshold(img_gray, 0, 255, cv2.THRESH_BINARY)[1]
     thresh = cv2.medianBlur(thresh, 5)
     contours, hierarchy = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     for cnt in contours:
-        cv2.drawContours(warped_img, [cnt], 0, (0, 0, 0), 3)
-        cv2.drawContours(thresh, [cnt], 0, 0, 3)
+        cv2.drawContours(warped_img, [cnt], 0, (0, 0, 0), n)
+        cv2.drawContours(thresh, [cnt], 0, 0, n)
 
     warp_mask = cv2.bitwise_not(thresh)
 
     return warped_img, warp_mask
-
-def rvContours1(warped_img, n):
-    img_gray = cv2.cvtColor(warped_img, cv2.COLOR_BGR2GRAY)
-    thresh = cv2.threshold(img_gray, 0, 255, cv2.THRESH_BINARY)[1]
-    thresh = cv2.medianBlur(thresh, 5)
-    for x in range(warped_img.shape[1]):
-        for y in range(warped_img.shape[0]):
-            if thresh[y, x] == 0:
-                warped_img[y, x] = 0
-    _, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
-    for cnt in contours:
-        cv2.drawContours(warped_img, [cnt], 0, (0, 0, 0), n)
-
-    return warped_img
 
 def returnRect(frame):
     img_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -683,21 +588,6 @@ def returnRect(frame):
     for cnt in contours:
         points = cv2.boundingRect(cnt)
     return points
-def blurContours(output_img, mask, warp_mask, n):
-    output_img1 = output_img.copy()
-    output_img1 = cv2.GaussianBlur(output_img1, (5, 5), 0)
-    img_gray = cv2.cvtColor(output_img, cv2.COLOR_BGR2GRAY)
-
-    img_sobel_x = cv2.Sobel(img_gray, cv2.CV_64F, 1, 0, ksize=5)
-    img_sobel_x = cv2.convertScaleAbs(img_sobel_x)
-
-    img_sobel_y = cv2.Sobel(img_gray, cv2.CV_64F, 0, 1, ksize=5)
-    img_sobel_y = cv2.convertScaleAbs(img_sobel_y)
-
-    img_sobel = cv2.addWeighted(img_sobel_x, 1, img_sobel_y, 1, 0);
-    cv2.imshow("sdf", img_sobel)
-    cv2.detail_Blender.prepare()
-    return output_img1
 
 def findPoint(frame):
     img_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -744,25 +634,6 @@ def trapezoidalWarping(frame, direction, moved):
 
     return frame
 
-def verticalWarping(frame, direction, moved):
-    ih, iw, _ = frame.shape
-    black = numpy.zeros((int(ih / math.cos(math.pi / (10 - moved))), iw, 4), numpy.uint8)
-    bh, bw, _ = black.shape
-    print("ih iw : " + str(ih) + " " + str(iw) + " bh bw : " + str(bh) + " " + str(bw))
-    pts_src = numpy.array([[0.0, 0.0], [float(iw), 0.0], [float(iw), float(ih)], [0.0, float(ih)]])
-
-    if moved > 0:
-        pts_dst = numpy.array([[0.0, 0.0], [float(bw), 0.0], [float(bw), float(bh)], [0.0, float(bh)]])
-    if moved < 0:
-        pts_dst = numpy.array([[0.0, 0.0], [float(bw), 0.0], [float(bw), float(bh)], [0.0, float(bh)]])
-
-    h, status = cv2.findHomography(pts_src, pts_dst)
-    frame = cv2.warpPerspective(frame, h, (black.shape[1], black.shape[0]))
-    #display("ab", frame)
-    #cv2.waitKey(1)
-
-    return frame
-
 def eulerAnglesToRotationMatrix(theta):
     #Calculate rotation about x axis
     Rx = numpy.array([[1,0,0], [0,math.cos(theta[0]),-math.sin(theta[0])], [0,math.sin(theta[0]),math.cos(theta[0])]], dtype=numpy.float32)
@@ -772,29 +643,3 @@ def eulerAnglesToRotationMatrix(theta):
     R = Rz * Ry * Rx
 
     return R
-
-def rtnWarpImage(frame, beforeResult, args, sift, flann, K, R):
-
-    warper = cv2.PyRotationWarper('spherical', float(950))
-    corner, frame = warper.warp(frame, K, R, cv2.INTER_LINEAR, cv2.BORDER_CONSTANT)
-    frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    beforeResult_gray = cv2.cvtColor(beforeResult, cv2.COLOR_BGR2GRAY)
-    features0 = sift.detectAndCompute(frame_gray, None)
-    features1 = sift.detectAndCompute(beforeResult_gray, None)
-
-    matches_src, matches_dst, n_matches = utils.compute_matches(
-        features0, features1, flann, knn=args.knn)
-
-    if n_matches < args.min_correspondence:
-        logger.error("error! too few correspondences")
-
-    H, mask = cv2.findHomography(matches_src, matches_dst, cv2.RANSAC, 5.0)
-
-    h0, w0 = beforeResult.shape[0:2]
-
-    img2_warped = cv2.warpPerspective(frame, H, (w0, h0), flags=cv2.INTER_CUBIC,
-                                      borderMode=cv2.BORDER_TRANSPARENT)
-
-    return img2_warped
-
-
