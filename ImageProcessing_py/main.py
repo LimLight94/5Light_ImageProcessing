@@ -57,7 +57,7 @@ if __name__ == '__main__':  # 플러그
     resultT = None
     features1 = None
     #meanTime = 0
-    h, w, f = 404, 720, 850
+    h, w, f = 404, 720, 950
     K = np.array([[f, 0, w / 2], [0, f, h / 2], [0, 0, 1]], dtype=np.float32)
     angles = math.pi / 180
     theta = [angles * 0, angles * 45, angles * 45]
