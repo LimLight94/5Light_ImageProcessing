@@ -43,7 +43,7 @@ if __name__ == '__main__':  # 플러그
     flann = cv2.FlannBasedMatcher({'algorithm': 1, 'trees': 5}, {'checks': 50})
 
     cap = cv2.VideoCapture(args.video_path)
-    beforeResult = cv2.imread("res/sam/0511sam/result6.jpg")
+    beforeResult = cv2.imread("res/0511sam/result6.jpg")
     beforeResult_gray = cv2.cvtColor(beforeResult, cv2.COLOR_BGR2GRAY)
     length = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -65,6 +65,8 @@ if __name__ == '__main__':  # 플러그
     #print("R : " + str(R))
     #video = cv2.VideoWriter('output.avi', cv2.VideoWriter_fourcc(*'DIVX'), 30, (beforeResult.shape[1],beforeResult.shape[0]))
     tm = cv2.TickMeter()
+
+    object_detector = Detection()
     i = 0
     while True:
         #tm.reset()
@@ -84,7 +86,6 @@ if __name__ == '__main__':  # 플러그
             frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
             #detection
-            object_detector = Detection()
             frame = object_detector.detectObject(frame)
 
             features0 = sift.detectAndCompute(frame_gray, None)
