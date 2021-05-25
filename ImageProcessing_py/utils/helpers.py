@@ -72,7 +72,7 @@ def display_red(title, img, corner, max_size=500000):
     shape = (int(scale * img1.shape[1]), int(scale * img1.shape[0]))
 
     #img1 = cv2.resize(img1, shape)
-    cv2.imshow(title, img1)
+    # cv2.imshow(title, img1)
 
     return img1
 

@@ -17,7 +17,7 @@ def sendEvent(id, objects, thumbFrame, frameList):
     createFolder(project_path + "/media/" + date)
     print(object)
     cv2.imwrite("media/" + date + "/thumb.jpg", thumbFrame)
-    video = cv2.VideoWriter("media/" + date + "/event.avi", cv2.VideoWriter_fourcc(*'DIVX'), 10,
+    video = cv2.VideoWriter("media/" + date + "/event.mp4", cv2.VideoWriter_fourcc(*'MP4V'), 10,
                             (thumbFrame.shape[1], thumbFrame.shape[0]))
     for f in frameList:
         video.write(f)
