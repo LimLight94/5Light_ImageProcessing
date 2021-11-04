@@ -14,6 +14,9 @@ Team 5Light (산학연계 프로젝트)
 ## 영상처리 순서도
 ![스크린샷 2021-11-04 오후 10 10 46](https://user-images.githubusercontent.com/49181228/140319359-cc5aeca9-abb6-4e81-a483-5227a4cb81ed.png)
 
+## 실행영상
+https://user-images.githubusercontent.com/49181228/140323151-ca7d25a7-8d62-454b-9cdc-fe51b617d9f6.mp4
+
 
 ## License
 ```
